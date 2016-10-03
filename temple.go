@@ -2,7 +2,6 @@ package temple
 
 import (
 	"errors"
-	"fmt"
 	"html/template"
 	"os"
 	"sync"
@@ -57,7 +56,6 @@ func (t Temple) Get(name string) (*template.Template, error) {
 	tmpl, ok := t.cache[name]
 	t.mu.RUnlock()
 	if ok {
-		fmt.Println("From Cache")
 		return tmpl, nil
 	}
 
@@ -69,11 +67,8 @@ func (t Temple) Get(name string) (*template.Template, error) {
 
 	// if we don't want to cache, then just forget about the template immediately
 	if !t.Cache {
-		fmt.Println("Forgetting")
 		return tmpl, err
 	}
-
-	fmt.Println("Caching")
 
 	// now store this in the cache
 	t.mu.Lock()
