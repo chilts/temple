@@ -1,10 +1,15 @@
 package temple
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"os"
 	"sync"
+)
+
+var (
+	ErrNotADirectory = errors.New("Not a directory")
 )
 
 // Type Temple allows you to read a directory of templates and either cache them (in production mode) or discard them
@@ -20,16 +25,16 @@ type Temple struct {
 
 // NewTemple returns an initialised Temple. The directory should exist, the baseFilename should exist and cache should
 // be true (for each template to be cached) or false (to be discarded and re-read on each invocation).
-func NewTemple(dir, baseFilename string, cache bool) (Temple, error) {
+func NewTemple(dir, baseFilename string, cache bool) (*Temple, error) {
 	// firstly, check that this directory exists
 	stat, err := os.Stat(dir)
 	if os.IsNotExist(err) {
-		panic(err)
+		return nil, err
 	}
 
 	// check that this is a directory
 	if !stat.IsDir() {
-		panic(err)
+		return nil, ErrNotADirectory
 	}
 
 	// all okay
@@ -40,7 +45,7 @@ func NewTemple(dir, baseFilename string, cache bool) (Temple, error) {
 		cache: make(map[string]*template.Template),
 	}
 
-	return tmpl, nil
+	return &tmpl, nil
 }
 
 // Get will return the html/template you asked for. Note: you should supply the full filename such as "index.html",
