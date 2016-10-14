@@ -77,3 +77,13 @@ func (t Temple) Get(name string) (*template.Template, error) {
 
 	return tmpl, err
 }
+
+// MustGet will return the html/template you asked for. The same notes apply as Get. However, in this case, we'll call
+// panic if the template doesn't load or parse correctly.
+func (t Temple) MustGet(name string) *template.Template {
+	tmpl, err := t.Get(name)
+	if err != nil {
+		panic(err)
+	}
+	return tmpl
+}
